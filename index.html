@@ -172,6 +172,23 @@
             color: var(--text-primary);
         }
 
+        /* Dropdown Styling */
+        .dropdown-menu-dark {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+        }
+
+        .dropdown-menu-dark .dropdown-item {
+            color: var(--text-primary);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+        }
+
+        .dropdown-menu-dark .dropdown-item:hover {
+            background-color: var(--badge-bg);
+        }
+
         /* Output Box */
         .output-box {
             background: #000000;
@@ -283,8 +300,8 @@
                 
                 <!-- Target Domain Section -->
                 <div class="mb-3">
-                    <label for="domainName" class="form-label">Target Domain Name</label>
-                    <input type="text" class="form-control" id="domainName" placeholder="e.g. blogs666.online">
+                    <label for="domainName" class="form-label">Target Domain Name (Optional)</label>
+                    <input type="text" class="form-control" id="domainName" placeholder="e.g. blogs666.online (Leave empty if no domain)">
                 </div>
 
                 <!-- Topic -->
@@ -399,10 +416,25 @@
                     </div>
                 </div>
                 <div class="modal-footer border-secondary px-4 py-3 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
-                    <span class="text-secondary small text-center text-sm-start" id="copyNotice">Click copy to copy prompt to clipboard.</span>
-                    <button type="button" class="btn btn-mono w-100 w-sm-auto" onclick="copyPromptToClipboard()" id="modalCopyBtn">
-                        <i class="fa-regular fa-copy me-2"></i>Copy Prompt
-                    </button>
+                    <span class="text-secondary small text-center text-sm-start" id="copyNotice">Prompt auto-copies when launching AI.</span>
+                    <div class="d-flex gap-2 w-100 w-sm-auto justify-content-end">
+                        <button type="button" class="btn btn-mono" onclick="copyPromptToClipboard()" id="modalCopyBtn">
+                            <i class="fa-regular fa-copy me-2"></i>Copy Prompt
+                        </button>
+                        
+                        <!-- Open in AI Dropdown Button -->
+                        <div class="dropdown">
+                            <button class="btn btn-mono-secondary dropdown-toggle py-2 px-3" type="button" id="openAiDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-robot me-1"></i> Send to AI
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="openAiDropdown">
+                                <li><a class="dropdown-item" href="#" onclick="openInAI('chatgpt')"><i class="fa-solid fa-bolt me-2 text-warning"></i>ChatGPT</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="openInAI('gemini')"><i class="fa-solid fa-sparkles me-2 text-info"></i>Gemini</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="openInAI('claude')"><i class="fa-solid fa-brain me-2 text-danger"></i>Claude</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="openInAI('deepseek')"><i class="fa-solid fa-code me-2 text-primary"></i>DeepSeek</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -490,8 +522,6 @@
         // Automatic Rephrasing Function for Disclaimer
         function rephraseDisclaimerText(text) {
             const raw = text && text.trim() !== "" ? text.trim() : "This content is for informational purposes only. Please verify before proceeding.";
-            
-            // Generate a fresh rephrased version
             return `Notice: ${raw} Real-time conditions or details may differ, so readers should independently double-check facts before relying on this post.`;
         }
 
@@ -508,7 +538,10 @@
 
         function buildAndShowPrompt() {
             // Retrieve User Form Inputs
-            const domain = document.getElementById('domainName').value.trim() || '[DOMAIN_NAME]';
+            const rawDomain = document.getElementById('domainName').value.trim();
+            const hasDomain = rawDomain !== "";
+            const domain = hasDomain ? rawDomain : "";
+            
             const topic = document.getElementById('topic').value.trim() || '[ARTICLE_TOPIC]';
             const primaryKw = document.getElementById('primaryKeyword').value.trim() || '[PRIMARY_KEYWORD]';
             
@@ -529,6 +562,27 @@
             const rawDisclaimer = document.getElementById('disclaimerText').value;
             const rephrasedDisclaimer = rephraseDisclaimerText(rawDisclaimer);
             const secKwString = secondaryKeywordsList.length > 0 ? secondaryKeywordsList.join(', ') : '[SECONDARY_KEYWORDS]';
+
+            // Conditional Rule 3 based on Domain presence
+            const rule3Text = hasDomain 
+                ? `3. Website Link & Reference Rephrasing: Seamlessly integrate references to "${domain}" throughout the article for more related content using varied phrasing (e.g., "According to guides on ${domain}", "For more related content visit ${domain}", "As highlighted by the editorial team at ${domain}", "For deeper insights, explore ${domain}", "Data compiled by ${domain}").`
+                : `3. Website Link & Reference Rephrasing: No target domain provided. Do NOT mention any website links, domains, or site references anywhere in the article.`;
+
+            // Conditional Structural Blocks based on Domain presence
+            const phase2DomainRef = hasDomain 
+                ? ` Mention practical insights and related content from **${domain}** naturally.` 
+                : ``;
+
+            const expertGuidesRef = hasDomain 
+                ? `* **Expert Guides:** {Mention curated insights available on **${domain}**}` 
+                : `* **Expert Guides:** {Mention curated expert insights and industry resources}`;
+
+            const q2Ref = hasDomain ? ` referencing insights from ${domain}` : ``;
+            const q5Ref = hasDomain ? ` referencing research on ${domain}` : ``;
+            const q10Ref = hasDomain ? ` concluding with a referral to ${domain}` : ``;
+            const finalThoughtsRef = hasDomain 
+                ? ` Encourage readers to share their thoughts or explore more related content on **${domain}**.` 
+                : ` Encourage readers to share their thoughts or explore more topics.`;
 
             // Generate Master Prompt Template filled with User Inputs in the Exact Formatted Structure
             const masterPrompt = `Act as an Expert SEO Content Writer and Senior Editor. Your task is to write a comprehensive, highly engaging, and search-engine-optimized article based strictly on the parameters and dynamic outline provided below.
@@ -552,7 +606,7 @@ EXPERT WRITING & SEO RULES:
    - Title tag MUST be max 67 characters, high-CTR optimized, and begin with your core focus words/primary keyword.
    - Meta description must be 150–160 characters long, incorporating primary and secondary keywords organically.
    - URL Slug must be clean, lowercase, and kebab-case based on the primary keyword.
-3. Website Link & Reference Rephrasing: Seamlessly integrate the website "${domain}" throughout the article using varied phrasing (e.g., "According to guides on ${domain}", "As highlighted by the editorial team at ${domain}", "For deeper insights, explore ${domain}", "Data compiled by ${domain}").
+${rule3Text}
 4. Dynamic Disclaimer Rule: Write a unique, freshly rephrased disclaimer at the top of the post stating: (1) Content is for general information only, and (2) Real-time conditions or details may differ, so readers should not rely solely on this post.
 5. Structural Formatting: Use short paragraphs (2–4 lines), bold text for key insights, clear bulleted lists, step-by-step guides, callout notes, and structured markdown tables.
 6. Public-Facing Content Only: Never write structural meta-labels (such as "The Hook:", "The Context:", "The Value:", "H2:", "H3:") in the final content. Write standard, engaging blog prose directly under clean public headings.
@@ -599,7 +653,7 @@ URL Slug: /{primary-keyword-slug}
 {Clear, actionable advice to begin. Include helpful tips or warnings naturally within the text.}
 
 ### Phase 2: Key Execution & Best Practices
-{Detailed walkthrough incorporating secondary keywords such as ${secKwString}. Mention practical insights from **${domain}** naturally.}
+{Detailed walkthrough incorporating secondary keywords such as ${secKwString}.${phase2DomainRef}}
 
 ### Phase 3: Advanced Optimization & Final Adjustments
 {Final execution steps and expert recommendations.}
@@ -625,7 +679,7 @@ URL Slug: /{primary-keyword-slug}
 
 ## Resources & Recommended Reading
 * **Official Portals:** {Information on official or industry resources}
-* **Expert Guides:** {Mention curated insights available on **${domain}**}
+${expertGuidesRef}
 
 ---
 
@@ -635,7 +689,7 @@ URL Slug: /{primary-keyword-slug}
    {Direct 2-3 sentence answer.}
 
 2. **{Question 2 about Secondary Keyword}?**  
-   {Direct 2-3 sentence answer referencing insights from ${domain}.}
+   {Direct 2-3 sentence answer${q2Ref}.}
 
 3. **{Question 3}?**  
    {Direct 2-3 sentence answer.}
@@ -644,7 +698,7 @@ URL Slug: /{primary-keyword-slug}
    {Direct 2-3 sentence answer.}
 
 5. **{Question 5}?**  
-   {Direct 2-3 sentence answer referencing research on ${domain}.}
+   {Direct 2-3 sentence answer${q5Ref}.}
 
 6. **{Question 6}?**  
    {Direct 2-3 sentence answer.}
@@ -659,12 +713,12 @@ URL Slug: /{primary-keyword-slug}
    {Direct 2-3 sentence answer.}
 
 10. **{Question 10}?**  
-    {Direct 2-3 sentence answer concluding with a referral to ${domain}.}
+    {Direct 2-3 sentence answer${q10Ref}.}
 
 ---
 
 ## Final Thoughts
-{Summarize the main points in 2–3 sentences using a natural ${tone} tone. Encourage readers to share their thoughts or explore more guides on **${domain}**.}`;
+{Summarize the main points in 2–3 sentences using a natural ${tone} tone.${finalThoughtsRef}}`;
 
             document.getElementById('promptOutputText').innerText = masterPrompt;
 
@@ -675,7 +729,7 @@ URL Slug: /{primary-keyword-slug}
         // Copy Clipboard Functionality
         function copyPromptToClipboard() {
             const promptText = document.getElementById('promptOutputText').innerText;
-            navigator.clipboard.writeText(promptText).then(() => {
+            return navigator.clipboard.writeText(promptText).then(() => {
                 const btn = document.getElementById('modalCopyBtn');
                 btn.innerHTML = '<i class="fa-solid fa-check me-2"></i>Copied!';
                 btn.classList.replace('btn-mono', 'btn-success');
@@ -685,6 +739,38 @@ URL Slug: /{primary-keyword-slug}
                 }, 2000);
             }).catch(err => {
                 console.error('Copy failed: ', err);
+            });
+        }
+
+        // Auto Copy and Auto-launch AI Tool Chat
+        function openInAI(platform) {
+            const promptText = document.getElementById('promptOutputText').innerText;
+            
+            // Step 1: Force copy to clipboard first
+            copyPromptToClipboard().then(() => {
+                let url = '';
+                
+                // Step 2: Set up targeted deep links
+                switch(platform) {
+                    case 'chatgpt':
+                        // ChatGPT supports auto-filling via 'q' parameter in web links
+                        url = 'https://chatgpt.com/?q=' + encodeURIComponent(promptText);
+                        break;
+                    case 'gemini':
+                        url = 'https://gemini.google.com/app';
+                        break;
+                    case 'claude':
+                        url = 'https://claude.ai/new';
+                        break;
+                    case 'deepseek':
+                        url = 'https://chat.deepseek.com/';
+                        break;
+                }
+                
+                // Step 3: Open in new tab
+                if(url) {
+                    window.open(url, '_blank');
+                }
             });
         }
     </script>
