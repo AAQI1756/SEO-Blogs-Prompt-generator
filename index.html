@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master SEO Prompt Generator</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Monochromatic UI Theme */
+        :root {
+            --bg-body: #0d0d0d;
+            --bg-card: #171717;
+            --bg-input: #000000;
+            --border-color: #2e2e2e;
+            --border-focus: #ffffff;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --text-muted: #666666;
+            --btn-bg: #ffffff;
+            --btn-text: #000000;
+            --badge-bg: #262626;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Fully Fluid Responsive Container */
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Monochromatic Card Styling with Extra Rounded Corners */
+        .mono-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        }
+
+        .mono-title {
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        /* Input Controls - Rounded Pills Design */
+        .form-label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-control, .form-select {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 50rem !important; /* Pill-shaped rounded inputs */
+            padding: 0.75rem 1.25rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        textarea.form-control {
+            border-radius: 20px !important; /* Slightly larger radius for multi-line inputs */
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: var(--bg-input);
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Input Group Rounding Adjustments */
+        .input-group {
+            border-radius: 50rem;
+        }
+        
+        .input-group .form-control {
+            border-top-right-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+        }
+
+        .input-group .btn-mono-secondary {
+            border-top-right-radius: 50rem !important;
+            border-bottom-right-radius: 50rem !important;
+            border-top-left-radius: 0 !important;
+            border-bottom-left-radius: 0 !important;
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+        }
+
+        /* Custom Keyword Tags */
+        .kw-tag {
+            background-color: var(--badge-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 50rem;
+            padding: 0.4rem 0.85rem;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-right: 0.4rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .kw-tag i {
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .kw-tag i:hover {
+            color: var(--text-primary);
+        }
+
+        /* Fully Rounded Pill Buttons */
+        .btn-mono {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            font-weight: 700;
+            border-radius: 50rem !important;
+            padding: 0.85rem 1.75rem;
+            transition: opacity 0.2s ease, transform 0.1s ease;
+        }
+
+        .btn-mono:hover {
+            opacity: 0.9;
+            color: var(--btn-text);
+        }
+
+        .btn-mono:active {
+            transform: scale(0.98);
+        }
+
+        .btn-mono-secondary {
+            background-color: var(--badge-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 50rem !important;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-mono-secondary:hover {
+            background-color: #333333;
+            color: var(--text-primary);
+        }
+
+        /* Output Box */
+        .output-box {
+            background: #000000;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.25rem;
+            color: #d4d4d4;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            max-height: 60vh;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Backdrop Blur & Modal Enhancements */
+        .modal-backdrop.show {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            color: var(--text-primary);
+        }
+
+        /* Processing Overlay Spinner */
+        #processingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Custom Mobile Responsive Refinements */
+        @media (max-width: 576px) {
+            body {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .mono-card {
+                padding: 1.5rem !important;
+                border-radius: 20px;
+            }
+
+            .display-6 {
+                font-size: 1.6rem;
+            }
+
+            .form-control, .form-select {
+                padding: 0.65rem 1rem;
+                font-size: 0.88rem;
+            }
+
+            .btn-mono {
+                padding: 0.75rem 1.25rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-body);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333333;
+            border-radius: 50rem;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555555;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Backdrop Blur Processing Spinner Overlay -->
+    <div id="processingOverlay">
+        <div class="spinner-border text-light mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+        <h5 class="fw-bold tracking-wide text-center">GENERATING MASTER PROMPT...</h5>
+        <p class="text-secondary small text-center px-3">Injecting form details into the exact master structure</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="app-container py-3">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <span class="badge bg-white text-dark rounded-pill px-3 py-2 mb-2 fw-bold">PROMPT STUDIO v4.0</span>
+            <h1 class="display-6 mono-title mb-1">Master SEO Prompt Engine</h1>
+            <p class="text-secondary small">Configure parameters to generate fully populated AI prompts.</p>
+        </div>
+
+        <div class="mono-card p-4 p-md-5">
+            <form id="promptForm">
+                
+                <!-- Target Domain Section -->
+                <div class="mb-3">
+                    <label for="domainName" class="form-label">Target Domain Name</label>
+                    <input type="text" class="form-control" id="domainName" placeholder="e.g. blogs666.online">
+                </div>
+
+                <!-- Topic -->
+                <div class="mb-3">
+                    <label for="topic" class="form-label">Article Topic</label>
+                    <input type="text" class="form-control" id="topic" placeholder="e.g. Indonesia Special Days Winter Travel Trips">
+                </div>
+
+                <!-- Primary Keyword -->
+                <div class="mb-3">
+                    <label for="primaryKeyword" class="form-label">Primary Keyword</label>
+                    <input type="text" class="form-control" id="primaryKeyword" placeholder="e.g. Indonesia winter travel">
+                </div>
+
+                <!-- Secondary Keywords Dynamic Add -->
+                <div class="mb-3">
+                    <label class="form-label">Secondary Keywords</label>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="secKwInput" placeholder="Type secondary keyword...">
+                        <button class="btn btn-mono-secondary" type="button" id="addKwBtn">Go / Add</button>
+                    </div>
+                    <div id="kwContainer" class="d-flex flex-wrap mt-2">
+                        <!-- Dynamic keyword tags appear here -->
+                    </div>
+                </div>
+
+                <!-- Target Audience Dropdown List -->
+                <div class="mb-3">
+                    <label for="audienceSelect" class="form-label">Target Audience</label>
+                    <select class="form-select mb-2" id="audienceSelect">
+                        <option value="" selected>General (Default / Unspecified)</option>
+                        <option value="General Public & Mass Audience">General Public & Mass Audience</option>
+                        <option value="Children & Kids">Children & Kids</option>
+                        <option value="Youth & Teenagers">Youth & Teenagers</option>
+                        <option value="Young Adults & College Students">Young Adults & College Students</option>
+                        <option value="Working Professionals & Executives">Working Professionals & Executives</option>
+                        <option value="Government Officials & Policy Makers">Government Officials & Policy Makers</option>
+                        <option value="Business Owners & Entrepreneurs">Business Owners & Entrepreneurs</option>
+                        <option value="Travelers, Tourists & Nomads">Travelers, Tourists & Nomads</option>
+                        <option value="Parents & Families">Parents & Families</option>
+                        <option value="Seniors & Retirees">Seniors & Retirees</option>
+                        <option value="Tech Enthusiasts & Developers">Tech Enthusiasts & Developers</option>
+                        <option value="Investors & Financial Analysts">Investors & Financial Analysts</option>
+                        <option value="Health & Fitness Enthusiasts">Health & Fitness Enthusiasts</option>
+                        <option value="Educators, Teachers & Students">Educators, Teachers & Students</option>
+                        <option value="Creative Artists & Designers">Creative Artists & Designers</option>
+                        <option value="B2B Corporate Clients">B2B Corporate Clients</option>
+                        <option value="E-commerce Shoppers & Consumers">E-commerce Shoppers & Consumers</option>
+                    </select>
+                    <input type="text" class="form-control" id="customAudience" placeholder="Or type custom target audience (Optional)...">
+                </div>
+
+                <!-- Tone of Voice Dropdown List -->
+                <div class="mb-3">
+                    <label for="toneSelect" class="form-label">Tone of Voice</label>
+                    <select class="form-select" id="toneSelect">
+                        <option value="Informational" selected>Informational (Default)</option>
+                        <option value="Professional & Authoritative">Professional & Authoritative</option>
+                        <option value="Conversational & Friendly">Conversational & Friendly</option>
+                        <option value="Persuasive & Sales-Oriented">Persuasive & Sales-Oriented</option>
+                        <option value="Academic & Scholarly">Academic & Scholarly</option>
+                        <option value="Inspirational & Visionary">Inspirational & Visionary</option>
+                        <option value="Humorous & Casual">Humorous & Casual</option>
+                        <option value="Urgent & Action-Driven">Urgent & Action-Driven</option>
+                        <option value="Empathetic & Supportive">Empathetic & Supportive</option>
+                        <option value="Analytical & Data-Driven">Analytical & Data-Driven</option>
+                        <option value="Storytelling & Narrative">Storytelling & Narrative</option>
+                        <option value="Diplomatic & Formal">Diplomatic & Formal</option>
+                        <option value="Skeptical & Critical">Skeptical & Critical</option>
+                        <option value="Enthusiastic & Energetic">Enthusiastic & Energetic</option>
+                    </select>
+                </div>
+
+                <!-- Target Word Count Constraint -->
+                <div class="mb-3">
+                    <label for="targetWords" class="form-label">Target Word Count</label>
+                    <input type="number" class="form-control" id="targetWords" value="1000" min="100" step="100" placeholder="e.g. 1000">
+                    <div class="form-text text-secondary small mt-1">
+                        Strict Mandate: Generated article must hit this target and never fall under it.
+                    </div>
+                </div>
+
+                <!-- Disclaimer Field -->
+                <div class="mb-4">
+                    <label for="disclaimerText" class="form-label">Disclaimer</label>
+                    <textarea class="form-control" id="disclaimerText" rows="2" placeholder="This content is for informational purposes only. Please verify all details before proceeding."></textarea>
+                    <div class="form-text text-secondary small mt-1">
+                        Will be automatically rephrased and formatted into the master prompt structure.
+                    </div>
+                </div>
+
+                <!-- Submit Action Button -->
+                <button type="button" onclick="startGenerationProcess()" class="btn btn-mono w-100 py-3">
+                    <i class="fa-solid fa-bolt me-2"></i>GENERATE PROMPT
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Output Modal Popup -->
+    <div class="modal fade" id="promptModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header border-secondary px-4 py-3">
+                    <h5 class="modal-title fw-bold">Generated Master Prompt</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="output-box" id="promptOutputText">
+                        <!-- Complete Master Prompt Text Injected Dynamically -->
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary px-4 py-3 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+                    <span class="text-secondary small text-center text-sm-start" id="copyNotice">Click copy to copy prompt to clipboard.</span>
+                    <button type="button" class="btn btn-mono w-100 w-sm-auto" onclick="copyPromptToClipboard()" id="modalCopyBtn">
+                        <i class="fa-regular fa-copy me-2"></i>Copy Prompt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Secondary Keywords Management
+        const secondaryKeywordsList = [];
+        const secKwInput = document.getElementById('secKwInput');
+        const addKwBtn = document.getElementById('addKwBtn');
+        const kwContainer = document.getElementById('kwContainer');
+
+        function renderKeywords() {
+            kwContainer.innerHTML = '';
+            secondaryKeywordsList.forEach((kw, index) => {
+                const tag = document.createElement('span');
+                tag.className = 'kw-tag';
+                tag.innerHTML = `${escapeHtml(kw)} <i class="fa-solid fa-xmark" onclick="removeKeyword(${index})"></i>`;
+                kwContainer.appendChild(tag);
+            });
+        }
+
+        function addKeyword() {
+            const val = secKwInput.value.trim();
+            if (val && !secondaryKeywordsList.includes(val)) {
+                secondaryKeywordsList.push(val);
+                secKwInput.value = '';
+                renderKeywords();
+            }
+        }
+
+        function removeKeyword(index) {
+            secondaryKeywordsList.splice(index, 1);
+            renderKeywords();
+        }
+
+        addKwBtn.addEventListener('click', addKeyword);
+        secKwInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addKeyword();
+            }
+        });
+
+        // Dynamic System Dark/Light Theme Support
+        function applySystemTheme() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.documentElement.style.setProperty('--bg-body', '#f4f4f5');
+                document.documentElement.style.setProperty('--bg-card', '#ffffff');
+                document.documentElement.style.setProperty('--bg-input', '#f0f0f2');
+                document.documentElement.style.setProperty('--border-color', '#e4e4e7');
+                document.documentElement.style.setProperty('--border-focus', '#000000');
+                document.documentElement.style.setProperty('--text-primary', '#09090b');
+                document.documentElement.style.setProperty('--text-secondary', '#71717a');
+                document.documentElement.style.setProperty('--text-muted', '#a1a1aa');
+                document.documentElement.style.setProperty('--btn-bg', '#09090b');
+                document.documentElement.style.setProperty('--btn-text', '#ffffff');
+                document.documentElement.style.setProperty('--badge-bg', '#e4e4e7');
+            } else {
+                document.documentElement.style.setProperty('--bg-body', '#0d0d0d');
+                document.documentElement.style.setProperty('--bg-card', '#171717');
+                document.documentElement.style.setProperty('--bg-input', '#000000');
+                document.documentElement.style.setProperty('--border-color', '#2e2e2e');
+                document.documentElement.style.setProperty('--border-focus', '#ffffff');
+                document.documentElement.style.setProperty('--text-primary', '#ffffff');
+                document.documentElement.style.setProperty('--text-secondary', '#a3a3a3');
+                document.documentElement.style.setProperty('--text-muted', '#666666');
+                document.documentElement.style.setProperty('--btn-bg', '#ffffff');
+                document.documentElement.style.setProperty('--btn-text', '#000000');
+                document.documentElement.style.setProperty('--badge-bg', '#262626');
+            }
+        }
+
+        window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', applySystemTheme);
+        applySystemTheme();
+
+        // Helper Utility
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // Automatic Rephrasing Function for Disclaimer
+        function rephraseDisclaimerText(text) {
+            const raw = text && text.trim() !== "" ? text.trim() : "This content is for informational purposes only. Please verify before proceeding.";
+            
+            // Generate a fresh rephrased version
+            return `Notice: ${raw} Real-time conditions or details may differ, so readers should independently double-check facts before relying on this post.`;
+        }
+
+        // Process Generation Workflow
+        function startGenerationProcess() {
+            const overlay = document.getElementById('processingOverlay');
+            overlay.style.display = 'flex';
+
+            setTimeout(() => {
+                buildAndShowPrompt();
+                overlay.style.display = 'none';
+            }, 1000);
+        }
+
+        function buildAndShowPrompt() {
+            // Retrieve User Form Inputs
+            const domain = document.getElementById('domainName').value.trim() || '[DOMAIN_NAME]';
+            const topic = document.getElementById('topic').value.trim() || '[ARTICLE_TOPIC]';
+            const primaryKw = document.getElementById('primaryKeyword').value.trim() || '[PRIMARY_KEYWORD]';
+            
+            // Audience Resolution
+            const selectedAudience = document.getElementById('audienceSelect').value;
+            const customAudience = document.getElementById('customAudience').value.trim();
+            let finalAudience = "General Audience";
+            if (selectedAudience && customAudience) {
+                finalAudience = `${selectedAudience}, ${customAudience}`;
+            } else if (selectedAudience) {
+                finalAudience = selectedAudience;
+            } else if (customAudience) {
+                finalAudience = customAudience;
+            }
+
+            const tone = document.getElementById('toneSelect').value || 'Informational';
+            const targetWords = document.getElementById('targetWords').value || "1000";
+            const rawDisclaimer = document.getElementById('disclaimerText').value;
+            const rephrasedDisclaimer = rephraseDisclaimerText(rawDisclaimer);
+            const secKwString = secondaryKeywordsList.length > 0 ? secondaryKeywordsList.join(', ') : '[SECONDARY_KEYWORDS]';
+
+            // Generate Master Prompt Template filled with User Inputs in the Exact Formatted Structure
+            const masterPrompt = `Act as an Expert SEO Content Writer and Senior Editor. Your task is to write a comprehensive, highly engaging, and search-engine-optimized article based strictly on the parameters and dynamic outline provided below.
+
+================================================================================
+[USER INPUT SECTION]
+Fill in these variables for every new article:
+
+- TOPIC: ${topic}
+- PRIMARY KEYWORD: ${primaryKw}
+- SECONDARY KEYWORDS: ${secKwString}
+- TARGET AUDIENCE: ${finalAudience}
+- TONE OF VOICE: ${tone}
+- TARGET WORD COUNT: ${targetWords} words (UNACCEPTABLE IF UNDER: ${targetWords} words)
+- DISCLAIMER REQUIRED?: YES
+================================================================================
+
+EXPERT WRITING & SEO RULES:
+1. Strict Word Count Limit: You must hit the Target Word Count (${targetWords} words). Falling below the "UNACCEPTABLE IF UNDER" limit (${targetWords} words) is strictly prohibited. Max is never to exceed reasonable limits, but under target words is never acceptable.
+2. Title Tag & Meta SEO Rules:
+   - Title tag MUST be max 67 characters, high-CTR optimized, and begin with your core focus words/primary keyword.
+   - Meta description must be 150–160 characters long, incorporating primary and secondary keywords organically.
+   - URL Slug must be clean, lowercase, and kebab-case based on the primary keyword.
+3. Website Link & Reference Rephrasing: Seamlessly integrate the website "${domain}" throughout the article using varied phrasing (e.g., "According to guides on ${domain}", "As highlighted by the editorial team at ${domain}", "For deeper insights, explore ${domain}", "Data compiled by ${domain}").
+4. Dynamic Disclaimer Rule: Write a unique, freshly rephrased disclaimer at the top of the post stating: (1) Content is for general information only, and (2) Real-time conditions or details may differ, so readers should not rely solely on this post.
+5. Structural Formatting: Use short paragraphs (2–4 lines), bold text for key insights, clear bulleted lists, step-by-step guides, callout notes, and structured markdown tables.
+6. Public-Facing Content Only: Never write structural meta-labels (such as "The Hook:", "The Context:", "The Value:", "H2:", "H3:") in the final content. Write standard, engaging blog prose directly under clean public headings.
+
+--------------------------------------------------------------------------------
+
+[ARTICLE OUTPUT STRUCTURE]
+
+[META DATA SETUP]
+Title Tag (Max 67 chars): {Title starting with main keyword / high-impact phrase}
+Meta Description: {Action-oriented 150-160 character summary with keywords}
+URL Slug: /{primary-keyword-slug}
+
+---
+
+> **Notice:** ${rephrasedDisclaimer}
+
+---
+
+# {H1 Title: High-Impact Headline Containing Primary Keyword: ${primaryKw}}
+
+{Engaging opening paragraph introducing ${topic} and naturally incorporating **${primaryKw}** within the first 100 words. Address the main needs of ${finalAudience} in a smooth, reader-friendly tone without using structural labels like 'Hook' or 'Context'.}
+
+> **Key Highlights**
+> * {Highlight 1}
+> * {Highlight 2}
+> * {Highlight 3}
+
+---
+
+## Why ${topic} Matters Right Now
+{Provide a direct, compelling 2–3 sentence summary answering why this topic is important, followed by natural bullet points outlining key benefits:}
+
+* **{Benefit / Reason 1}:** {Detailed explanation written in natural prose}
+* **{Benefit / Reason 2}:** {Detailed explanation with concrete facts}
+* **{Benefit / Reason 3}:** {Detailed explanation with concrete facts}
+
+---
+
+## Comprehensive Guide to ${primaryKw}
+{A sequential walkthrough showing how to navigate the topic smoothly.}
+
+### Phase 1: Getting Started
+{Clear, actionable advice to begin. Include helpful tips or warnings naturally within the text.}
+
+### Phase 2: Key Execution & Best Practices
+{Detailed walkthrough incorporating secondary keywords such as ${secKwString}. Mention practical insights from **${domain}** naturally.}
+
+### Phase 3: Advanced Optimization & Final Adjustments
+{Final execution steps and expert recommendations.}
+
+---
+
+## Strategic Comparison & Quick Overview
+
+| Option / Category | Key Highlights | Optimal Conditions | Ideal For |
+| :--- | :--- | :--- | :--- |
+| **{Option A}** | {Detail A1} | {Detail A2} | {Target A3} |
+| **{Option B}** | {Detail B1} | {Detail B2} | {Target B3} |
+| **{Option C}** | {Detail C1} | {Detail C2} | {Target C3} |
+
+---
+
+## Essential Rules to Keep in Mind
+* **{Rule / Factor 1}:** {Practical advice tailored for ${finalAudience}}
+* **{Rule / Factor 2}:** {Important rule or best practice}
+* **{Rule / Factor 3}:** {Key detail to keep in mind}
+
+---
+
+## Resources & Recommended Reading
+* **Official Portals:** {Information on official or industry resources}
+* **Expert Guides:** {Mention curated insights available on **${domain}**}
+
+---
+
+## Frequently Asked Questions
+
+1. **{Question 1 about ${primaryKw}}?**  
+   {Direct 2-3 sentence answer.}
+
+2. **{Question 2 about Secondary Keyword}?**  
+   {Direct 2-3 sentence answer referencing insights from ${domain}.}
+
+3. **{Question 3}?**  
+   {Direct 2-3 sentence answer.}
+
+4. **{Question 4}?**  
+   {Direct 2-3 sentence answer.}
+
+5. **{Question 5}?**  
+   {Direct 2-3 sentence answer referencing research on ${domain}.}
+
+6. **{Question 6}?**  
+   {Direct 2-3 sentence answer.}
+
+7. **{Question 7}?**  
+   {Direct 2-3 sentence answer.}
+
+8. **{Question 8}?**  
+   {Direct 2-3 sentence answer.}
+
+9. **{Question 9}?**  
+   {Direct 2-3 sentence answer.}
+
+10. **{Question 10}?**  
+    {Direct 2-3 sentence answer concluding with a referral to ${domain}.}
+
+---
+
+## Final Thoughts
+{Summarize the main points in 2–3 sentences using a natural ${tone} tone. Encourage readers to share their thoughts or explore more guides on **${domain}**.}`;
+
+            document.getElementById('promptOutputText').innerText = masterPrompt;
+
+            const modal = new bootstrap.Modal(document.getElementById('promptModal'));
+            modal.show();
+        }
+
+        // Copy Clipboard Functionality
+        function copyPromptToClipboard() {
+            const promptText = document.getElementById('promptOutputText').innerText;
+            navigator.clipboard.writeText(promptText).then(() => {
+                const btn = document.getElementById('modalCopyBtn');
+                btn.innerHTML = '<i class="fa-solid fa-check me-2"></i>Copied!';
+                btn.classList.replace('btn-mono', 'btn-success');
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fa-regular fa-copy me-2"></i>Copy Prompt';
+                    btn.classList.replace('btn-success', 'btn-mono');
+                }, 2000);
+            }).catch(err => {
+                console.error('Copy failed: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
